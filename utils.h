@@ -1,6 +1,5 @@
 #ifndef UTILS_H
 #define UTILS_H
-#include "token.h"
 
 template <typename T>
 struct Node {
@@ -24,6 +23,10 @@ private:
     Node<T>* head;
     Node<T>* tail;
 };
+
+std::string static ltrim(const std::string& s);
+std::string static rtrim(const std::string& s);
+std::string static trim(const std::string& s);
 
 
 #endif

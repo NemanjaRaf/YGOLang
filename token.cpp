@@ -2,23 +2,31 @@
 #include <iostream>
 #include <string>
 
+Token::Token(TokenType type, const std::string& value) : type(type), value(value) {}
+
+TokenType Token::getType() const {
+    return type;
+}
+
 std::string enumToString(TokenType type) {
-    switch (type) {
-        case TOKEN_START_MAIN: return "TOKEN_START_MAIN";
-        case TOKEN_END_MAIN: return "TOKEN_END_MAIN";
-        case TOKEN_EOF: return "TOKEN_EOF";
-        case TOKEN_IDENTIFIER: return "TOKEN_IDENTIFIER";
-        case TOKEN_VARIABLE_DECLARATION: return "TOKEN_VARIABLE_DECLARATION";
-        case TOKEN_INPUT_OPERATOR: return "TOKEN_INPUT_OPERATOR";
-        case TOKEN_OUTPUT_OPERATOR: return "TOKEN_OUTPUT_OPERATOR";
-        case TOKEN_ARITHMETIC_OPERATOR: return "TOKEN_ARITHMETIC_OPERATOR";
-        case TOKEN_UNKNOWN: return "TOKEN_UNKNOWN";
+    switch (type)
+    {
+        case TOKEN_CONSTANT: return "CONSTANT";
+        case TOKEN_KEYWORD: return "KEYWORD";
+        case TOKEN_VARIABLE: return "VARIABLE";
+        case TOKEN_OPERATOR: return "OPERATOR";
+        case TOKEN_LOGICAL_OPERATOR: return "LOGICAL_OPERATOR";
+        case TOKEN_VARIABLE_TYPE: return "VARIABLE_TYPE";
+        case TOKEN_UNKNOWN: return "UNKNOWN";
         default: return "Unknown TokenType";
     }
 }
 
-std::ostream& operator<<(std::ostream& os, const Token& token) {
-    os << "Token(type=" << enumToString(token.getType()) << ", value=\"" << token.getValue() << "\")";
+const std::string& Token::getValue() const {
+    return value;
+}
 
+std::ostream& operator<<(std::ostream& os, const Token& token) {
+    os << "Token(" << enumToString(token.type) << ", " << token.value << ")";
     return os;
 }

@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "token.h"
+#include <string>
 #include <iostream>
 
 // double linked list implementation
@@ -77,4 +77,18 @@ DoubleLinkedList<T>::~DoubleLinkedList() {
         delete node;
         node = next;
     }
+}
+
+std::string static ltrim(const std::string& s) {
+    size_t start = s.find_first_not_of(" \t\n\r\f\v");
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+std::string static rtrim(const std::string& s) {
+    size_t end = s.find_last_not_of(" \t\n\r\f\v");
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+std::string static trim(const std::string& s) {
+    return rtrim(ltrim(s));
 }

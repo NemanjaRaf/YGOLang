@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -Wall -g -std=c++11
 INCLUDES = -I.
 
-SRCS = main.cpp lexer.cpp token.cpp utils.cpp
+SRCS = main.cpp lexer.cpp token.cpp utils.cpp line.cpp
 OBJS = $(SRCS:.cpp=.o)
 OBJDIR = dist
 OBJS_WITH_DIR = $(addprefix $(OBJDIR)/,$(OBJS))

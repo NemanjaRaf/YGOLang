@@ -1,30 +1,29 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <iostream>
 #include <string>
 
 enum TokenType {
-    TOKEN_START_MAIN,
-    TOKEN_END_MAIN,
-    TOKEN_EOF,
-    TOKEN_IDENTIFIER,
-    TOKEN_NUMBER,
+    TOKEN_CONSTANT,
+    TOKEN_KEYWORD,
+    TOKEN_VARIABLE,
+    TOKEN_OPERATOR,
+    TOKEN_LOGICAL_OPERATOR,
+    TOKEN_VARIABLE_TYPE,
     TOKEN_UNKNOWN,
-    TOKEN_VARIABLE_DECLARATION,
-    TOKEN_ARITHMETIC_OPERATOR,
-    TOKEN_INPUT_OPERATOR,
-    TOKEN_OUTPUT_OPERATOR,
 };
 
 class Token {
 public:
-    Token(TokenType type, const std::string& value) : type(type), value(value) {}
-    TokenType getType() const { return type; }
-    const std::string& getValue() const { return value; }
+    Token(TokenType type, const std::string& value);
+    TokenType getType() const;
+    const std::string& getValue() const;
     friend std::ostream& operator<<(std::ostream& os, const Token& token);
+
 private:
     TokenType type;
     std::string value;
 };
 
-#endif // TOKEN_H
+#endif
