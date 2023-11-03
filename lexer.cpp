@@ -78,10 +78,10 @@ Line* Lexer::nextLine() {
     }
 
     // Handle output operator
-    if (std::regex_search(start, end, match, std::regex(R"(Draw Phase: Reveal (Spell Card (\"[\w\s]*\")|[\w\s]+)\.)"))) {
+    if (std::regex_search(start, end, match, std::regex(R"(Draw Phase: Reveal (Spell Card (\"[\w\s\d]*\")|[\w\s\d-]+)\.)"))) {
         position = endOfLine + 1; // Move to the next line
         std::string output = match[1];
-        return new Line(LINE_OUTPUT_OPERATOR, "Draw Phase: Reveal " + output);
+        return new Line(LINE_OUTPUT_OPERATOR, match[0]);
     }
 
     // Handle arithmetic operators
@@ -93,6 +93,39 @@ Line* Lexer::nextLine() {
         return new Line(LINE_ARITHMETIC_OPERATOR, variableName1 + "" + operatorName + "" + variableName2 + "!");
     }
 
+    // Handle if statements
+    if (std::regex_search(start, end, match, std::regex(R"(Activate Trap: Mirror Force)"))) {
+        position = endOfLine + 1; // Move to the next line
+        return new Line(LINE_IF, "Activate Trap: Mirror Force");
+    }
+
+    // Handle else statements
+    if (std::regex_search(start, end, match, std::regex(R"(Counter Trap: Negate Attack)"))) {
+        position = endOfLine + 1; // Move to the next line
+        return new Line(LINE_ELSE, "Counter Trap: Negate Attack");
+    }
+
+    //handle else if statements
+    if (std::regex_search(start, end, match, std::regex(R"(Quick-Play:([\w\s\-\!\,]*))"))) {
+        position = endOfLine + 1; // Move to the next line
+        std::string logicalOperator = match[1];
+        return new Line(LINE_ELSEIF, "Quick-Play:" + logicalOperator);
+    }
+
+    if (std::regex_search(start, end, match, std::regex(R"(Start Phase:)"))) {
+        position = endOfLine + 1; // Move to the next line
+        return new Line(LINE_IF_START, "Start Phase:");
+    } 
+    if (std::regex_search(start, end, match, std::regex(R"(End Phase.)"))) {
+        position = endOfLine + 1; // Move to the next line
+        return new Line(LINE_IF_END, "End Phase.");
+    }
+
+    if (std::regex_search(start, end, match, std::regex(R"(I end my turn and the duel!)"))) {
+        position = endOfLine + 1; // Move to the next line
+        return new Line(LINE_END_MAIN, "I end my turn and the duel!");
+    }
+
     // Handle logical operators
     if (std::regex_search(start, end, match, std::regex(R"((?:\s*([\w\s\-]+)\s+and\s+([\w\s\-]+),\s+Engage\s+in\s+Duel\s+for\s+([\w\s\-]+)[!,]?\s*)+)"))) {
         // read line from start to end
@@ -102,25 +135,6 @@ Line* Lexer::nextLine() {
         std::string variableName2 = match[2];
         std::string variableName3 = match[3];
         return new Line(LINE_LOGICAL_OPERATOR, line);
-    }
-
-    // Handle if statements
-    if (std::regex_search(start, end, match, std::regex(R"(Activate Trap: Mirror Force)"))) {
-        position = endOfLine + 1; // Move to the next line
-        return new Line(LINE_IF, "Activate Trap: Mirror Force");
-    }
-    if (std::regex_search(start, end, match, std::regex(R"(Start Phase:)"))) {
-        position = endOfLine + 1; // Move to the next line
-        return new Line(LINE_IF, "Start Phase:");
-    } 
-    if (std::regex_search(start, end, match, std::regex(R"(End Phase.)"))) {
-        position = endOfLine + 1; // Move to the next line
-        return new Line(LINE_IF, "End Phase.");
-    }
-
-    if (std::regex_search(start, end, match, std::regex(R"(I end my turn and the duel!)"))) {
-        position = endOfLine + 1; // Move to the next line
-        return new Line(LINE_END_MAIN, "I end my turn and the duel!");
     }
 
     position = endOfLine + 1; // Skip to the next line
