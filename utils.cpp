@@ -1,8 +1,8 @@
 #include "utils.h"
+#include <vector>
 #include <string>
+#include <sstream>
 #include <iostream>
-
-// double linked list implementation
 
 template <typename T>
 void DoubleLinkedList<T>::push_back(T value) {
@@ -91,4 +91,16 @@ std::string static rtrim(const std::string& s) {
 
 std::string static trim(const std::string& s) {
     return rtrim(ltrim(s));
+}
+
+std::vector<std::string> static split(const std::string &str, char delim) {
+    std::vector<std::string> tokens;
+    std::istringstream iss(str);
+    std::string token;
+    while (std::getline(iss, token, delim)) {
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+    return tokens;
 }

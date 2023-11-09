@@ -23,6 +23,12 @@ enum LineType {
     LINE_IF_END,
     LINE_ELSE,
     LINE_ELSEIF,
+    LINE_FOR,
+    LINE_FOR_BEGIN,
+    LINE_FOR_END,
+    LINE_WHILE,
+    LINE_WHILE_BEGIN,
+    LINE_WHILE_END,
 };
 
 class Line {

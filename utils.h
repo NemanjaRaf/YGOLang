@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <string>
+
 template <typename T>
 struct Node {
     Node(T value) : value(value), next(nullptr), prev(nullptr) {}
@@ -27,6 +29,7 @@ private:
 std::string static ltrim(const std::string& s);
 std::string static rtrim(const std::string& s);
 std::string static trim(const std::string& s);
+std::vector<std::string> static split(const std::string &str, char delim);
 
 
 #endif

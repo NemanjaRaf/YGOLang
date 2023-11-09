@@ -19,6 +19,11 @@ std::string enumToString(LineType type) {
         case LINE_IF: return "LINE_IF";
         case LINE_IF_START: return "LINE_IF_START";
         case LINE_IF_END: return "LINE_IF_END";
+        case LINE_ELSE: return "LINE_ELSE";
+        case LINE_ELSEIF: return "LINE_ELSEIF";
+        case LINE_FOR: return "LINE_FOR";
+        case LINE_FOR_BEGIN: return "LINE_FOR_BEGIN";
+        case LINE_FOR_END: return "LINE_FOR_END";
         case LINE_UNKNOWN: return "LINE_UNKNOWN";
         default: return "Unknown LineType";
     }
@@ -32,14 +37,12 @@ std::ostream& operator<<(std::ostream& os, const Line& Line) {
 
 static void tokenizeVariable(DoubleLinkedList<Token*>& tokens, std::string variable) {
     // std::cout << "tokenizeVariable: " << variable << std::endl;
-    // if starts with Token with power ...  
     if (std::regex_search(variable, std::regex(R"(Token with power ([\w\s\-]+))"))) {
         std::smatch match;
         std::regex_search(variable, match, std::regex(R"(Token with power ([\w\s\-]+))"));
         tokens.push_back(new Token(TOKEN_KEYWORD, "Token with power"));
         tokens.push_back(new Token(TOKEN_CONSTANT, trim(match[1])));
     }
-    //if starts with Link n of variable
     else if (std::regex_search(variable, std::regex(R"(Link ([\w\s\-]+) of ([\w\s\-]+))"))) {
         std::smatch match;
         std::regex_search(variable, match, std::regex(R"(Link ([\w\s\-]+) of ([\w\s\-]+))"));
@@ -48,7 +51,6 @@ static void tokenizeVariable(DoubleLinkedList<Token*>& tokens, std::string varia
         tokens.push_back(new Token(TOKEN_KEYWORD, "of"));
         tokens.push_back(new Token(TOKEN_VARIABLE, trim(match[2])));
     }
-    // if starts with Links of variable
     else if (std::regex_search(variable, std::regex(R"(Links of ([\w\s\-]+))"))) {
         std::smatch match;
         std::regex_search(variable, match, std::regex(R"(Links of ([\w\s\-]+))"));
@@ -70,12 +72,30 @@ void Line::tokenize(DoubleLinkedList<Token*>& tokens) {
             tokens.push_back(new Token(TOKEN_KEYWORD, "I end my turn and the duel!"));
             break;
         case LINE_VARIABLE_DECLARATION:
-            tokens.push_back(new Token(TOKEN_KEYWORD, "Card Summon"));
-            tokens.push_back(new Token(TOKEN_VARIABLE, this->getValue().substr(12, this->getValue().find(" As ") - 12)));
-            tokens.push_back(new Token(TOKEN_KEYWORD, "As"));
-            tokens.push_back(new Token(TOKEN_VARIABLE_TYPE, this->getValue().substr(this->getValue().find(" As ") + 4, this->getValue().find(" with power ") - this->getValue().find(" As ") - 4)));
-            tokens.push_back(new Token(TOKEN_KEYWORD, "with power"));
-            tokens.push_back(new Token(TOKEN_CONSTANT, this->getValue().substr(this->getValue().find(" with power ") + 12, this->getValue().length() - this->getValue().find(" with power ") - 13)));
+            if (std::regex_search(this->getValue(), match, std::regex(R"(Card Summon ([\s]*)([\wa-zA-Z\s-]+) As ([\w\s]+) with (power ([\w]+)|([\w\s]+) links ([\w\,]+))\.)"))) {
+                if (match[6] == "") {
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "Card Summon"));
+                    tokens.push_back(new Token(TOKEN_VARIABLE, this->getValue().substr(12, this->getValue().find(" As ") - 12)));
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "As"));
+                    tokens.push_back(new Token(TOKEN_VARIABLE_TYPE, this->getValue().substr(this->getValue().find(" As ") + 4, this->getValue().find(" with power ") - this->getValue().find(" As ") - 4)));
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "with power"));
+                    tokens.push_back(new Token(TOKEN_CONSTANT, this->getValue().substr(this->getValue().find(" with power ") + 12, this->getValue().length() - this->getValue().find(" with power ") - 13)));
+                } else {
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "Card Summon"));
+                    tokens.push_back(new Token(TOKEN_VARIABLE, match[2]));
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "As"));
+                    tokens.push_back(new Token(TOKEN_VARIABLE_TYPE, match[3]));
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "with"));
+                    tokens.push_back(new Token(TOKEN_VARIABLE_TYPE, match[6]));
+                    tokens.push_back(new Token(TOKEN_KEYWORD, "links"));
+
+                    std::vector<std::string> constants = split(match[7], ',');
+                    for (std::string constant : constants) {
+                        tokens.push_back(new Token(TOKEN_CONSTANT, constant));
+                    }
+                }
+            }
+            
             break;
         case LINE_INPUT_OPERATOR:
             tokens.push_back(new Token(TOKEN_VARIABLE, this->getValue().substr(0, this->getValue().find(", Absorb Power!"))));
@@ -110,7 +130,6 @@ void Line::tokenize(DoubleLinkedList<Token*>& tokens) {
                 tokens.push_back(new Token(TOKEN_LOGICAL_OPERATOR, trim(match[3])));
                 v = match.suffix().str();
 
-                // if v starts with OR or AND save it as a token
                 if (std::regex_search(v, match, std::regex(R"((?:\s*(Or|And)\s*)+)"))) {
                     tokens.push_back(new Token(TOKEN_LOGICAL_OPERATOR, trim(match[1])));
                     v = match.suffix().str();
@@ -153,13 +172,47 @@ void Line::tokenize(DoubleLinkedList<Token*>& tokens) {
                     tokens.push_back(new Token(TOKEN_LOGICAL_OPERATOR, trim(match[3])));
                     v = match.suffix().str();
 
-                    // if v starts with OR or AND save it as a token
                     if (std::regex_search(v, match, std::regex(R"((?:\s*(Or|And)\s*)+)"))) {
                         tokens.push_back(new Token(TOKEN_LOGICAL_OPERATOR, trim(match[1])));
                         v = match.suffix().str();
                     }
 
                 }
+            }
+            break;
+        case LINE_FOR:
+            if (std::regex_search(this->getValue(), match, std::regex(R"(Activate Continuous Spell: Magic Formula from ([\w\s\-\d]+) To ([\w\s\-\d]+) With ([\w\s\-\d]+) increment\.)"))) {
+                tokens.push_back(new Token(TOKEN_KEYWORD, "Activate Continuous Spell: Magic Formula from"));
+                tokenizeVariable(tokens, trim(match[1]));
+                std::cout << "match[1]: " << match[1] << std::endl;
+                tokens.push_back(new Token(TOKEN_KEYWORD, "To"));
+                tokenizeVariable(tokens, trim(match[2]));
+                tokens.push_back(new Token(TOKEN_KEYWORD, "With"));
+                tokenizeVariable(tokens, trim(match[3]));
+                tokens.push_back(new Token(TOKEN_KEYWORD, "increment."));
+            }
+            break;
+        case LINE_FOR_BEGIN:
+            if (this->getValue() == "Tap Continuous Spell: Magic Formula.") {
+                tokens.push_back(new Token(TOKEN_KEYWORD, "Tap Continuous Spell: Magic Formula."));
+            }
+            break;
+        case LINE_FOR_END:
+            if (this->getValue() == "End Continuous Spell: Magic Formula.") {
+                tokens.push_back(new Token(TOKEN_KEYWORD, "End Continuous Spell: Magic Formula."));
+            }
+            break;
+        case LINE_WHILE:
+            tokens.push_back(new Token(TOKEN_KEYWORD, "Activate Continuous Trap: Imperial Order based on previous duel!"));
+            break;
+        case LINE_WHILE_BEGIN:
+            if (this->getValue() == "Check Continuous Trap: Imperial Order!") {
+                tokens.push_back(new Token(TOKEN_KEYWORD, "Check Continuous Trap: Imperial Order!"));
+            }
+            break;
+        case LINE_WHILE_END:
+            if (this->getValue() == "End Continuous Trap: Imperial Order!") {
+                tokens.push_back(new Token(TOKEN_KEYWORD, "End Continuous Trap: Imperial Order!"));
             }
             break;
     }
