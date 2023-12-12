@@ -41,6 +41,7 @@ void DoubleLinkedList<T>::pop_back() {
         tail->next = nullptr;
     }
     delete node;
+    node = nullptr; // Set node to nullptr after deleting
 }
 
 template <typename T>
@@ -54,12 +55,16 @@ void DoubleLinkedList<T>::pop_front() {
         head->prev = nullptr;
     }
     delete node;
+    node = nullptr; // Set node to nullptr after deleting
 }
 
 template <typename T>
 void DoubleLinkedList<T>::print() {
     Node<T>* node = head;
+    std::cout << "Node: " << node << std::endl;
+    std::cout << "Node 2: " << node->next << std::endl;
     while (node != nullptr) {
+        
         if (node->value != nullptr) {
             std::cout << *(node->value) << std::endl;
         } else {

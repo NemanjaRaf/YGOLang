@@ -13,7 +13,7 @@ public:
     Lexer(FILE *fp);
     Line* nextLine();
     ~Lexer();
-    DoubleLinkedList<Line*> getLines();
+    DoubleLinkedList<Line*>* getLines();
     DoubleLinkedList<Token*> getTokens();
     void printLines();
     void printTokens();

@@ -60,11 +60,17 @@ Line* Lexer::nextLine() {
     }
 
     // Handle variable declarations
-    std::regex variableDeclarationRegex(R"(Card Summon ([\s]*)([\wa-zA-Z\s-]+) As ([\w\s]+) with (power ([\w]+)|([\w\s]+) links ([\w\,]+))\.)");
+    std::regex variableDeclarationRegex(R"(Card Summon ([\s]*)([\wa-zA-Z\s-]+) As ([\w\s]+) with (power ([\w\.\']+)|([\w\s]+) links ([\w\,\.\']+))\.)");
     if (std::regex_search(start, end, match, variableDeclarationRegex)) {
         position = endOfLine + 1; 
 
-        return new Line(LINE_VARIABLE_DECLARATION, match[0]);
+        Line l = Line(LINE_VARIABLE_DECLARATION, match[0]);
+        l.addData(match[2]);
+        l.addData(match[3]);
+        l.addData(match[5]);
+        l.addData(match[6]);
+        l.addData(match[7]);
+        return new Line(l);
     }
 
     // Handle input operator
@@ -185,10 +191,11 @@ void Lexer::readLines() {
             Line->tokenize(tokens);
             lines.push_back(Line);
     } while (Line->getType() != LINE_EOF);
+    lines.pop_back();
 }
 
-DoubleLinkedList<Line*> Lexer::getLines() {
-    return lines;
+DoubleLinkedList<Line*>* Lexer::getLines() {
+    return &lines;
 }
 
 DoubleLinkedList<Token*> Lexer::getTokens() {
@@ -196,7 +203,7 @@ DoubleLinkedList<Token*> Lexer::getTokens() {
 }
 
 void Lexer::printLines() {
-    getLines().print();
+    getLines()->print();
 }
 
 void Lexer::printTokens() {

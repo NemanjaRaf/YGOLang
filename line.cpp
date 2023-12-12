@@ -72,7 +72,7 @@ void Line::tokenize(DoubleLinkedList<Token*>& tokens) {
             tokens.push_back(new Token(TOKEN_KEYWORD, "I end my turn and the duel!"));
             break;
         case LINE_VARIABLE_DECLARATION:
-            if (std::regex_search(this->getValue(), match, std::regex(R"(Card Summon ([\s]*)([\wa-zA-Z\s-]+) As ([\w\s]+) with (power ([\w]+)|([\w\s]+) links ([\w\,]+))\.)"))) {
+            if (std::regex_search(this->getValue(), match, std::regex(R"(Card Summon ([\s]*)([\wa-zA-Z\s-]+) As ([\w\s\']+) with (power ([\w\.]+)|([\w\s]+) links ([\w\,\.\']+))\.)"))) {
                 if (match[6] == "") {
                     tokens.push_back(new Token(TOKEN_KEYWORD, "Card Summon"));
                     tokens.push_back(new Token(TOKEN_VARIABLE, this->getValue().substr(12, this->getValue().find(" As ") - 12)));

@@ -3,6 +3,7 @@
 #define LINE_H
 
 #include <string>
+#include <vector>
 #include "utils.h"
 #include "token.h"
 
@@ -38,9 +39,12 @@ public:
     const std::string& getValue() const { return value; }
     friend std::ostream& operator<<(std::ostream& os, const Line& Line);
     void tokenize(DoubleLinkedList<Token*>& tokens);
+    void addData(std::string data) { this->data.push_back(data); }
+    std::vector<std::string> getData() { return data; }
 private:
     LineType type;
     std::string value;
+    std::vector<std::string> data;
 };
 
 #endif // LINE_H

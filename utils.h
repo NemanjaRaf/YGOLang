@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <string>
+#include <vector>
 
 template <typename T>
 struct Node {
@@ -21,6 +22,7 @@ public:
     void pop_front();
     void print();
     ~DoubleLinkedList();
+    Node<T>* getHead() { return head; }
 private:
     Node<T>* head;
     Node<T>* tail;

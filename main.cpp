@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lexer.h"
+#include "parser.h"
 
 int main() {
 
@@ -21,9 +22,12 @@ int main() {
     }
 
     Lexer lexer(fp);
-    // lexer.printLines();
-    lexer.printTokens();
 
+    Parser parser(&lexer);
+    parser.parse();
+    // lexer.printLines();
+
+    fclose(fp);
     std::cout << "Done" << std::endl;
 
     return 0;
