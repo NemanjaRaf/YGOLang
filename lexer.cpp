@@ -77,14 +77,18 @@ Line* Lexer::nextLine() {
     if (std::regex_search(start, end, match, std::regex(R"(([\s]*)([\wa-zA-Z\s-]+), Absorb Power!)"))) {
         position = endOfLine + 1; 
         std::string variableName = match[2];
-        return new Line(LINE_INPUT_OPERATOR, variableName + ", Absorb Power!");
+        Line l = Line(LINE_INPUT_OPERATOR, match[0]);
+        l.addData(variableName);
+        return new Line(l);
     }
 
     // Handle output operator
     if (std::regex_search(start, end, match, std::regex(R"(Draw Phase: Reveal (Spell Card (\"[\w\s\d]*\")|[\w\s\d-]+)\.)"))) {
         position = endOfLine + 1; 
         std::string output = match[1];
-        return new Line(LINE_OUTPUT_OPERATOR, match[0]);
+        Line l = Line(LINE_OUTPUT_OPERATOR, match[0]);
+        l.addData(output);
+        return new Line(l);
     }
 
     // Handle arithmetic operators
@@ -93,7 +97,11 @@ Line* Lexer::nextLine() {
         std::string variableName1 = match[2];
         std::string operatorName = match[3];
         std::string variableName2 = match[4];
-        return new Line(LINE_ARITHMETIC_OPERATOR, variableName1 + "" + operatorName + "" + variableName2 + "!");
+        Line l = Line(LINE_ARITHMETIC_OPERATOR, match[0]);
+        l.addData(variableName1);
+        l.addData(operatorName);
+        l.addData(variableName2);
+        return new Line(l);
     }
 
     // Handle if statements
@@ -136,8 +144,12 @@ Line* Lexer::nextLine() {
         position = endOfLine + 1; 
         std::string variableName1 = match[1];
         std::string variableName2 = match[2];
-        std::string variableName3 = match[3];
-        return new Line(LINE_LOGICAL_OPERATOR, line);
+        std::string operation = match[3];
+        Line l = Line(LINE_LOGICAL_OPERATOR, line);
+        l.addData(variableName1);
+        l.addData(variableName2);
+        l.addData(operation);
+        return new Line(l);
     }
 
     // Handle for loops
@@ -146,7 +158,11 @@ Line* Lexer::nextLine() {
         std::string variableName1 = match[1];
         std::string variableName2 = match[2];
         std::string variableName3 = match[3];
-        return new Line(LINE_FOR, "Activate Continuous Spell: Magic Formula from " + variableName1 + " To " + variableName2 + " With " + variableName3 + " increment.");
+        Line l = Line(LINE_FOR, match[0]);
+        l.addData(variableName1);
+        l.addData(variableName2);
+        l.addData(variableName3);
+        return new Line(l);
     }
 
     // Handle for begin
