@@ -1,0 +1,109 @@
+
+State 0
+- (0) Program -> . 'Let's duel!' Block 'I end my turn and the duel!'
+- (1) Block -> . StatementList
+- 'Let's duel!' shift and go to State 1
+
+State 1
+- (2) Program -> 'Let's duel!' . Block 'I end my turn and the duel!'
+- (3) Block -> . StatementList
+- If next token is part of a Block, go to State 2.
+
+State 2
+- (4) Block -> StatementList .
+- (5) StatementList -> . Statement StatementList
+- (6) Statement -> . Declaration
+- (7) Statement -> . Assignment
+- (8) Statement -> . Print
+- (9) Statement -> . Read
+- (10) Statement -> . If
+- (11) Statement -> . While
+- (12) Statement -> . For
+- (13) Statement -> . Logical
+- (14) Statement -> . Else
+- (15) Statement -> . ELSEIF
+- If next token starts a Statement, go to State 3.
+
+State 3
+- (16) StatementList -> Statement . StatementList
+- (17) StatementList -> Statement .
+- (18) Statement -> Declaration .
+- (19) Statement -> Assignment .
+- (20) Statement -> Print .
+- (21) Statement -> Read .
+- (22) Statement -> If .
+- (23) Statement -> While .
+- (24) Statement -> For .
+- (25) Statement -> Logical .
+- (26) Statement -> Else .
+- (27) Statement -> ELSEIF .
+- If Statement is complete, return to State 2 or reduce.
+
+State 4
+- (28) Declaration -> . 'Card Summon' Identifier 'As' Type 'with power' Constant
+- 'Card Summon' shift and go to State 5.
+
+State 5
+- (29) Declaration -> 'Card Summon' . Identifier 'As' Type 'with power' Constant
+- If next token is an Identifier, go to State 6.
+
+State 6
+- (30) Declaration -> 'Card Summon' Identifier . 'As' Type 'with power' Constant
+- 'As' shift and go to State 7.
+
+State 7
+- (31) Declaration -> 'Card Summon' Identifier 'As' . Type 'with power' Constant
+- If next token is a Type, go to State 8.
+
+State 8
+- (32) Declaration -> 'Card Summon' Identifier 'As' Type . 'with power' Constant
+- 'with power' shift and go to State 9.
+
+State 9
+- (33) Declaration -> 'Card Summon' Identifier 'As' Type 'with power' . Constant
+- If next token is a Constant, go to State 10.
+
+State 10
+- (34) Declaration -> 'Card Summon' Identifier 'As' Type 'with power' Constant .
+- If Declaration is complete, reduce and return to State 3.
+
+
+State 11
+- (35) Assignment -> . Identifier AssignmentOp Expression
+- If next token is an Identifier, go to State 12.
+
+State 12
+- (36) Assignment -> Identifier . AssignmentOp Expression
+- If next token is an AssignmentOp, go to State 13.
+
+State 13
+- (37) Assignment -> Identifier AssignmentOp . Expression
+- If next token starts an Expression, go to State 14.
+
+State 14
+- (38) Assignment -> Identifier AssignmentOp Expression .
+- If Assignment is complete, reduce and return to State 3.
+
+State 15
+- (39) Print -> . 'Draw phase: Reveal' Output
+- 'Draw phase: Reveal' shift and go to State 16.
+
+State 16
+- (40) Print -> 'Draw phase: Reveal' . Output
+- If next token starts an Output, go to State 17.
+
+State 17
+- (41) Print -> 'Draw phase: Reveal' Output .
+- If Print is complete, reduce and return to State 3.
+
+State 18
+- (42) Read -> . Identifier ', Absorb power!'
+- If next token is an Identifier, go to State 19.
+
+State 19
+- (43) Read -> Identifier . ', Absorb power!'
+- ', Absorb power!' shift and go to State 20.
+
+State 20
+- (44) Read -> Identifier ', Absorb power!' .
+- If Read is complete, reduce and return to State 3.

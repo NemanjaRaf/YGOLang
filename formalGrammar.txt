@@ -1,0 +1,27 @@
+Program -> 'Let's duel!' Block 'I end my turn and the duel!'
+Block -> StatementList
+
+StatementList -> Statement StatementList
+Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF
+
+Declaration -> 'Card Summon' Identifier 'As' Type 'with power' Constant
+Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster'
+
+Assignment -> Identifier AssignmentOp Expression
+AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies'
+
+
+Print -> 'Draw phase: Reveal' Output
+Output -> Identifier | Constant
+
+Read -> Identifier ', Absorb power!'
+
+Logical -> Identifier and Identifier ', Engage in duel for ' LogicalOp
+LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy'
+
+If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block 'End Phase.'
+Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block 'End Phase.'
+ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block 'End Phase.'
+
+While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.'
+For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.'
