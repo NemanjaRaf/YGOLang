@@ -22,6 +22,7 @@ bool Validator::run() {
 
 bool Validator::isVariableDeclared(std::string name) {
     bool array = false;
+    name = trim(name);
     if (name.substr(0, 9) == "Links of ") {
         name = name.substr(9);
         array = true;
@@ -30,6 +31,10 @@ bool Validator::isVariableDeclared(std::string name) {
     if (name.substr(0, 17) == "Token with power ") {
         return true;
     }
+
+    // trim the name
+    name = trim(name);
+    std::cout << "Checking if variable |" << name << "| is declared" << std::endl;
 
     for (Variable variable : variables) {
         if (variable.getName() == name) {

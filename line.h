@@ -8,22 +8,22 @@
 #include "token.h"
 
 enum LineType {
-    LINE_START_MAIN,
-    LINE_END_MAIN,
-    LINE_EOF,
-    LINE_IDENTIFIER,
-    LINE_NUMBER,
-    LINE_UNKNOWN,
-    LINE_VARIABLE_DECLARATION,
-    LINE_LOGICAL_OPERATOR,
-    LINE_ARITHMETIC_OPERATOR,
-    LINE_INPUT_OPERATOR,
-    LINE_OUTPUT_OPERATOR,
-    LINE_IF,
-    LINE_IF_START,
-    LINE_IF_END,
-    LINE_ELSE,
-    LINE_ELSEIF,
+    LINE_START_MAIN, // done
+    LINE_END_MAIN, // done
+    LINE_EOF, // --
+    LINE_IDENTIFIER, // --
+    LINE_NUMBER, // --
+    LINE_UNKNOWN, // --
+    LINE_VARIABLE_DECLARATION, // done
+    LINE_LOGICAL_OPERATOR, // done
+    LINE_ARITHMETIC_OPERATOR, // done
+    LINE_INPUT_OPERATOR, // done
+    LINE_OUTPUT_OPERATOR, // done
+    LINE_IF, // done
+    LINE_IF_START, // done
+    LINE_IF_END, // done
+    LINE_ELSE,// done
+    LINE_ELSEIF, // done
     LINE_FOR,
     LINE_FOR_BEGIN,
     LINE_FOR_END,

@@ -46,6 +46,12 @@ Line* Lexer::nextLine() {
     std::string::const_iterator start = line.begin();
     std::string::const_iterator end = line.end();
 
+    // is starts with --, skip
+    if (std::regex_search(start, end, std::regex(R"(^--.*)"))) {
+        position = endOfLine + 1; 
+        return nextLine();
+    }
+
     // if empty line, skip
     if (std::regex_search(start, end, std::regex(R"(^\s*$)"))) {
         position = endOfLine + 1; 
@@ -120,7 +126,24 @@ Line* Lexer::nextLine() {
     if (std::regex_search(start, end, match, std::regex(R"(Quick-Play:([\w\s\-\!\,]*))"))) {
         position = endOfLine + 1; 
         std::string logicalOperator = match[1];
-        return new Line(LINE_ELSEIF, "Quick-Play:" + logicalOperator);
+        Line l = Line(LINE_ELSEIF, "Quick-Play:" + logicalOperator);
+        // regex to get the logical operator
+        start = logicalOperator.begin();
+        end = logicalOperator.end();
+        // mattch is logical operator
+        match = std::smatch();
+
+        if (std::regex_search(start, end, match, std::regex(R"(^([\w\s\-]+)\s+and\s+([\w\s\-]+),\s+Engage\s+in\s+Duel\s+for\s+([\w\s\-]+)[!,]?\s*)"))) {
+            std::string variableName1 = match[1];
+            std::string variableName2 = match[2];
+            std::string operation = match[3];
+            l.addData(variableName1);
+            l.addData(variableName2);
+            l.addData(operation);
+        }
+
+
+        return new Line(l);
     }
 
     if (std::regex_search(start, end, match, std::regex(R"(Start Phase:)"))) {
