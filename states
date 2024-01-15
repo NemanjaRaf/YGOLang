@@ -1,109 +1,233 @@
-
-State 0
-- (0) Program -> . 'Let's duel!' Block 'I end my turn and the duel!'
-- (1) Block -> . StatementList
-- 'Let's duel!' shift and go to State 1
-
-State 1
-- (2) Program -> 'Let's duel!' . Block 'I end my turn and the duel!'
-- (3) Block -> . StatementList
-- If next token is part of a Block, go to State 2.
-
-State 2
-- (4) Block -> StatementList .
-- (5) StatementList -> . Statement StatementList
-- (6) Statement -> . Declaration
-- (7) Statement -> . Assignment
-- (8) Statement -> . Print
-- (9) Statement -> . Read
-- (10) Statement -> . If
-- (11) Statement -> . While
-- (12) Statement -> . For
-- (13) Statement -> . Logical
-- (14) Statement -> . Else
-- (15) Statement -> . ELSEIF
-- If next token starts a Statement, go to State 3.
-
-State 3
-- (16) StatementList -> Statement . StatementList
-- (17) StatementList -> Statement .
-- (18) Statement -> Declaration .
-- (19) Statement -> Assignment .
-- (20) Statement -> Print .
-- (21) Statement -> Read .
-- (22) Statement -> If .
-- (23) Statement -> While .
-- (24) Statement -> For .
-- (25) Statement -> Logical .
-- (26) Statement -> Else .
-- (27) Statement -> ELSEIF .
-- If Statement is complete, return to State 2 or reduce.
-
-State 4
-- (28) Declaration -> . 'Card Summon' Identifier 'As' Type 'with power' Constant
-- 'Card Summon' shift and go to State 5.
-
-State 5
-- (29) Declaration -> 'Card Summon' . Identifier 'As' Type 'with power' Constant
-- If next token is an Identifier, go to State 6.
-
-State 6
-- (30) Declaration -> 'Card Summon' Identifier . 'As' Type 'with power' Constant
-- 'As' shift and go to State 7.
-
-State 7
-- (31) Declaration -> 'Card Summon' Identifier 'As' . Type 'with power' Constant
-- If next token is a Type, go to State 8.
-
-State 8
-- (32) Declaration -> 'Card Summon' Identifier 'As' Type . 'with power' Constant
-- 'with power' shift and go to State 9.
-
-State 9
-- (33) Declaration -> 'Card Summon' Identifier 'As' Type 'with power' . Constant
-- If next token is a Constant, go to State 10.
-
-State 10
-- (34) Declaration -> 'Card Summon' Identifier 'As' Type 'with power' Constant .
-- If Declaration is complete, reduce and return to State 3.
-
-
-State 11
-- (35) Assignment -> . Identifier AssignmentOp Expression
-- If next token is an Identifier, go to State 12.
-
-State 12
-- (36) Assignment -> Identifier . AssignmentOp Expression
-- If next token is an AssignmentOp, go to State 13.
-
-State 13
-- (37) Assignment -> Identifier AssignmentOp . Expression
-- If next token starts an Expression, go to State 14.
-
-State 14
-- (38) Assignment -> Identifier AssignmentOp Expression .
-- If Assignment is complete, reduce and return to State 3.
-
-State 15
-- (39) Print -> . 'Draw phase: Reveal' Output
-- 'Draw phase: Reveal' shift and go to State 16.
-
-State 16
-- (40) Print -> 'Draw phase: Reveal' . Output
-- If next token starts an Output, go to State 17.
-
-State 17
-- (41) Print -> 'Draw phase: Reveal' Output .
-- If Print is complete, reduce and return to State 3.
-
-State 18
-- (42) Read -> . Identifier ', Absorb power!'
-- If next token is an Identifier, go to State 19.
-
-State 19
-- (43) Read -> Identifier . ', Absorb power!'
-- ', Absorb power!' shift and go to State 20.
-
-State 20
-- (44) Read -> Identifier ', Absorb power!' .
-- If Read is complete, reduce and return to State 3.
+	{[Program -> .'Let's duel!' Block 'I end my turn and the duel!', $]}	0	{[Program -> .'Let's duel!' Block 'I end my turn and the duel!', $]}
+goto(0, 'Let's)	{[Program -> 'Let's.duel!' Block 'I end my turn and the duel!', $]}	1	{[Program -> 'Let's.duel!' Block 'I end my turn and the duel!', $]}
+goto(1, duel!')	{[Program -> 'Let's duel!'.Block 'I end my turn and the duel!', $]}	2	{[Program -> 'Let's duel!'.Block 'I end my turn and the duel!', $]; [Block -> .StatementList, 'I]; [StatementList -> .Statement StatementList, 'I]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(2, Block)	{[Program -> 'Let's duel!' Block.'I end my turn and the duel!', $]}	3	{[Program -> 'Let's duel!' Block.'I end my turn and the duel!', $]}
+goto(2, StatementList)	{[Block -> StatementList., 'I]}	4	{[Block -> StatementList., 'I]}
+goto(2, Statement)	{[StatementList -> Statement.StatementList, 'I]}	5	{[StatementList -> Statement.StatementList, 'I]; [StatementList -> .Statement StatementList, 'I]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(2, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}
+goto(2, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(3, 'I)	{[Program -> 'Let's duel!' Block 'I.end my turn and the duel!', $]}	8	{[Program -> 'Let's duel!' Block 'I.end my turn and the duel!', $]}
+goto(5, StatementList)	{[StatementList -> Statement StatementList., 'I]}	9	{[StatementList -> Statement StatementList., 'I]}
+goto(5, Statement)	{[StatementList -> Statement.StatementList, 'I]}	5	 
+goto(5, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(5, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(6, |)	{[Statement -> Declaration |.Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	10	{[Statement -> Declaration |.Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Assignment -> .Identifier AssignmentOp Expression, |]}
+goto(7, Summon')	{[Declaration -> 'Card Summon'.Identifier 'As' Type 'with power' Constant, |]}	11	{[Declaration -> 'Card Summon'.Identifier 'As' Type 'with power' Constant, |]}
+goto(8, end)	{[Program -> 'Let's duel!' Block 'I end.my turn and the duel!', $]}	12	{[Program -> 'Let's duel!' Block 'I end.my turn and the duel!', $]}
+goto(10, Assignment)	{[Statement -> Declaration | Assignment.| Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	13	{[Statement -> Declaration | Assignment.| Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}
+goto(10, Identifier)	{[Assignment -> Identifier.AssignmentOp Expression, |]}	14	{[Assignment -> Identifier.AssignmentOp Expression, |]; [AssignmentOp -> .'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(11, Identifier)	{[Declaration -> 'Card Summon' Identifier.'As' Type 'with power' Constant, |]}	15	{[Declaration -> 'Card Summon' Identifier.'As' Type 'with power' Constant, |]}
+goto(12, my)	{[Program -> 'Let's duel!' Block 'I end my.turn and the duel!', $]}	16	{[Program -> 'Let's duel!' Block 'I end my.turn and the duel!', $]}
+goto(13, |)	{[Statement -> Declaration | Assignment |.Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	17	{[Statement -> Declaration | Assignment |.Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Print -> .'Draw phase: Reveal' Output, |]}
+goto(14, AssignmentOp)	{[Assignment -> Identifier AssignmentOp.Expression, |]}	18	{[Assignment -> Identifier AssignmentOp.Expression, |]}
+goto(14, 'Attacks')	{[AssignmentOp -> 'Attacks'.| 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}	19	{[AssignmentOp -> 'Attacks'.| 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(15, 'As')	{[Declaration -> 'Card Summon' Identifier 'As'.Type 'with power' Constant, |]}	20	{[Declaration -> 'Card Summon' Identifier 'As'.Type 'with power' Constant, |]; [Type -> .'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(16, turn)	{[Program -> 'Let's duel!' Block 'I end my turn.and the duel!', $]}	21	{[Program -> 'Let's duel!' Block 'I end my turn.and the duel!', $]}
+goto(17, Print)	{[Statement -> Declaration | Assignment | Print.| Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	22	{[Statement -> Declaration | Assignment | Print.| Read | If | While | For | Logical | Else | ELSEIF, 'Card]}
+goto(17, 'Draw)	{[Print -> 'Draw.phase: Reveal' Output, |]}	23	{[Print -> 'Draw.phase: Reveal' Output, |]}
+goto(18, Expression)	{[Assignment -> Identifier AssignmentOp Expression., |]}	24	{[Assignment -> Identifier AssignmentOp Expression., |]}
+goto(19, |)	{[AssignmentOp -> 'Attacks' |.'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}	25	{[AssignmentOp -> 'Attacks' |.'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(20, Type)	{[Declaration -> 'Card Summon' Identifier 'As' Type.'with power' Constant, |]}	26	{[Declaration -> 'Card Summon' Identifier 'As' Type.'with power' Constant, |]}
+goto(20, 'Normal)	{[Type -> 'Normal.Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	27	{[Type -> 'Normal.Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(21, and)	{[Program -> 'Let's duel!' Block 'I end my turn and.the duel!', $]}	28	{[Program -> 'Let's duel!' Block 'I end my turn and.the duel!', $]}
+goto(22, |)	{[Statement -> Declaration | Assignment | Print |.Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	29	{[Statement -> Declaration | Assignment | Print |.Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Read -> .Identifier ', Absorb power!', |]}
+goto(23, phase:)	{[Print -> 'Draw phase:.Reveal' Output, |]}	30	{[Print -> 'Draw phase:.Reveal' Output, |]}
+goto(25, 'Defends')	{[AssignmentOp -> 'Attacks' | 'Defends'.| 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}	31	{[AssignmentOp -> 'Attacks' | 'Defends'.| 'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(26, 'with)	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with.power' Constant, |]}	32	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with.power' Constant, |]}
+goto(27, Monster')	{[Type -> 'Normal Monster'.| 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	33	{[Type -> 'Normal Monster'.| 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(28, the)	{[Program -> 'Let's duel!' Block 'I end my turn and the.duel!', $]}	34	{[Program -> 'Let's duel!' Block 'I end my turn and the.duel!', $]}
+goto(29, Read)	{[Statement -> Declaration | Assignment | Print | Read.| If | While | For | Logical | Else | ELSEIF, 'Card]}	35	{[Statement -> Declaration | Assignment | Print | Read.| If | While | For | Logical | Else | ELSEIF, 'Card]}
+goto(29, Identifier)	{[Read -> Identifier.', Absorb power!', |]}	36	{[Read -> Identifier.', Absorb power!', |]}
+goto(30, Reveal')	{[Print -> 'Draw phase: Reveal'.Output, |]}	37	{[Print -> 'Draw phase: Reveal'.Output, |]; [Output -> .Identifier | Constant, |]}
+goto(31, |)	{[AssignmentOp -> 'Attacks' | 'Defends' |.'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}	38	{[AssignmentOp -> 'Attacks' | 'Defends' |.'Combines with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(32, power')	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with power'.Constant, |]}	39	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with power'.Constant, |]}
+goto(33, |)	{[Type -> 'Normal Monster' |.'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	40	{[Type -> 'Normal Monster' |.'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(34, duel!')	{[Program -> 'Let's duel!' Block 'I end my turn and the duel!'., $]}	41	{[Program -> 'Let's duel!' Block 'I end my turn and the duel!'., $]}
+goto(35, |)	{[Statement -> Declaration | Assignment | Print | Read |.If | While | For | Logical | Else | ELSEIF, 'Card]}	42	{[Statement -> Declaration | Assignment | Print | Read |.If | While | For | Logical | Else | ELSEIF, 'Card]; [If -> .'Activate Trap: Mirror Force' 'Start Phase:' Block 'End Phase.', |]}
+goto(36, ',)	{[Read -> Identifier ',.Absorb power!', |]}	43	{[Read -> Identifier ',.Absorb power!', |]}
+goto(37, Output)	{[Print -> 'Draw phase: Reveal' Output., |]}	44	{[Print -> 'Draw phase: Reveal' Output., |]}
+goto(37, Identifier)	{[Output -> Identifier.| Constant, |]}	45	{[Output -> Identifier.| Constant, |]}
+goto(38, 'Combines)	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines.with' | 'Splits by' | 'Duels' | 'Copies', Expression]}	46	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines.with' | 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(39, Constant)	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with power' Constant., |]}	47	{[Declaration -> 'Card Summon' Identifier 'As' Type 'with power' Constant., |]}
+goto(40, 'Effect)	{[Type -> 'Normal Monster' | 'Effect.Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	48	{[Type -> 'Normal Monster' | 'Effect.Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(42, If)	{[Statement -> Declaration | Assignment | Print | Read | If.| While | For | Logical | Else | ELSEIF, 'Card]}	49	{[Statement -> Declaration | Assignment | Print | Read | If.| While | For | Logical | Else | ELSEIF, 'Card]}
+goto(42, 'Activate)	{[If -> 'Activate.Trap: Mirror Force' 'Start Phase:' Block 'End Phase.', |]}	50	{[If -> 'Activate.Trap: Mirror Force' 'Start Phase:' Block 'End Phase.', |]}
+goto(43, Absorb)	{[Read -> Identifier ', Absorb.power!', |]}	51	{[Read -> Identifier ', Absorb.power!', |]}
+goto(45, |)	{[Output -> Identifier |.Constant, |]}	52	{[Output -> Identifier |.Constant, |]}
+goto(46, with')	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with'.| 'Splits by' | 'Duels' | 'Copies', Expression]}	53	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with'.| 'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(48, Monster')	{[Type -> 'Normal Monster' | 'Effect Monster'.| 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	54	{[Type -> 'Normal Monster' | 'Effect Monster'.| 'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(49, |)	{[Statement -> Declaration | Assignment | Print | Read | If |.While | For | Logical | Else | ELSEIF, 'Card]}	55	{[Statement -> Declaration | Assignment | Print | Read | If |.While | For | Logical | Else | ELSEIF, 'Card]; [While -> .'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(50, Trap:)	{[If -> 'Activate Trap:.Mirror Force' 'Start Phase:' Block 'End Phase.', |]}	56	{[If -> 'Activate Trap:.Mirror Force' 'Start Phase:' Block 'End Phase.', |]}
+goto(51, power!')	{[Read -> Identifier ', Absorb power!'., |]}	57	{[Read -> Identifier ', Absorb power!'., |]}
+goto(52, Constant)	{[Output -> Identifier | Constant., |]}	58	{[Output -> Identifier | Constant., |]}
+goto(53, |)	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' |.'Splits by' | 'Duels' | 'Copies', Expression]}	59	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' |.'Splits by' | 'Duels' | 'Copies', Expression]}
+goto(54, |)	{[Type -> 'Normal Monster' | 'Effect Monster' |.'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	60	{[Type -> 'Normal Monster' | 'Effect Monster' |.'Tuner Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(55, While)	{[Statement -> Declaration | Assignment | Print | Read | If | While.| For | Logical | Else | ELSEIF, 'Card]}	61	{[Statement -> Declaration | Assignment | Print | Read | If | While.| For | Logical | Else | ELSEIF, 'Card]}
+goto(55, 'Activate)	{[While -> 'Activate.Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	62	{[While -> 'Activate.Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(56, Mirror)	{[If -> 'Activate Trap: Mirror.Force' 'Start Phase:' Block 'End Phase.', |]}	63	{[If -> 'Activate Trap: Mirror.Force' 'Start Phase:' Block 'End Phase.', |]}
+goto(59, 'Splits)	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits.by' | 'Duels' | 'Copies', Expression]}	64	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits.by' | 'Duels' | 'Copies', Expression]}
+goto(60, 'Tuner)	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner.Monster' | 'Link Monster' | 'Fusion Monster', 'with]}	65	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner.Monster' | 'Link Monster' | 'Fusion Monster', 'with]}
+goto(61, |)	{[Statement -> Declaration | Assignment | Print | Read | If | While |.For | Logical | Else | ELSEIF, 'Card]}	66	{[Statement -> Declaration | Assignment | Print | Read | If | While |.For | Logical | Else | ELSEIF, 'Card]; [For -> .'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(62, Continuous)	{[While -> 'Activate Continuous.Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	67	{[While -> 'Activate Continuous.Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(63, Force')	{[If -> 'Activate Trap: Mirror Force'.'Start Phase:' Block 'End Phase.', |]}	68	{[If -> 'Activate Trap: Mirror Force'.'Start Phase:' Block 'End Phase.', |]}
+goto(64, by')	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by'.| 'Duels' | 'Copies', Expression]}	69	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by'.| 'Duels' | 'Copies', Expression]}
+goto(65, Monster')	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster'.| 'Link Monster' | 'Fusion Monster', 'with]}	70	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster'.| 'Link Monster' | 'Fusion Monster', 'with]}
+goto(66, For)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For.| Logical | Else | ELSEIF, 'Card]}	71	{[Statement -> Declaration | Assignment | Print | Read | If | While | For.| Logical | Else | ELSEIF, 'Card]}
+goto(66, 'Activate)	{[For -> 'Activate.Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	72	{[For -> 'Activate.Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(67, Spell:)	{[While -> 'Activate Continuous Spell:.Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	73	{[While -> 'Activate Continuous Spell:.Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(68, 'Start)	{[If -> 'Activate Trap: Mirror Force' 'Start.Phase:' Block 'End Phase.', |]}	74	{[If -> 'Activate Trap: Mirror Force' 'Start.Phase:' Block 'End Phase.', |]}
+goto(69, |)	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' |.'Duels' | 'Copies', Expression]}	75	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' |.'Duels' | 'Copies', Expression]}
+goto(70, |)	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' |.'Link Monster' | 'Fusion Monster', 'with]}	76	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' |.'Link Monster' | 'Fusion Monster', 'with]}
+goto(71, |)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For |.Logical | Else | ELSEIF, 'Card]}	77	{[Statement -> Declaration | Assignment | Print | Read | If | While | For |.Logical | Else | ELSEIF, 'Card]; [Logical -> .Identifier and Identifier ', Engage in duel for ' LogicalOp, |]}
+goto(72, Continuous)	{[For -> 'Activate Continuous.Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	78	{[For -> 'Activate Continuous.Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(73, Magic)	{[While -> 'Activate Continuous Spell: Magic.Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	79	{[While -> 'Activate Continuous Spell: Magic.Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(74, Phase:')	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:'.Block 'End Phase.', |]}	80	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:'.Block 'End Phase.', |]; [Block -> .StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(75, 'Duels')	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels'.| 'Copies', Expression]}	81	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels'.| 'Copies', Expression]}
+goto(76, 'Link)	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link.Monster' | 'Fusion Monster', 'with]}	82	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link.Monster' | 'Fusion Monster', 'with]}
+goto(77, Logical)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical.| Else | ELSEIF, 'Card]}	83	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical.| Else | ELSEIF, 'Card]}
+goto(77, Identifier)	{[Logical -> Identifier.and Identifier ', Engage in duel for ' LogicalOp, |]}	84	{[Logical -> Identifier.and Identifier ', Engage in duel for ' LogicalOp, |]}
+goto(78, Trap:)	{[For -> 'Activate Continuous Trap:.Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	85	{[For -> 'Activate Continuous Trap:.Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(79, Formula)	{[While -> 'Activate Continuous Spell: Magic Formula.from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	86	{[While -> 'Activate Continuous Spell: Magic Formula.from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(80, Block)	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block.'End Phase.', |]}	87	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block.'End Phase.', |]}
+goto(80, StatementList)	{[Block -> StatementList., 'End]}	88	{[Block -> StatementList., 'End]}
+goto(80, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	{[StatementList -> Statement.StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(80, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(80, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(81, |)	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' |.'Copies', Expression]}	90	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' |.'Copies', Expression]}
+goto(82, Monster')	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster'.| 'Fusion Monster', 'with]}	91	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster'.| 'Fusion Monster', 'with]}
+goto(83, |)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical |.Else | ELSEIF, 'Card]}	92	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical |.Else | ELSEIF, 'Card]; [Else -> .'Counter Trap: Negate Attack' 'Start Phase:' Block 'End Phase.', |]}
+goto(84, and)	{[Logical -> Identifier and.Identifier ', Engage in duel for ' LogicalOp, |]}	93	{[Logical -> Identifier and.Identifier ', Engage in duel for ' LogicalOp, |]}
+goto(85, Imperial)	{[For -> 'Activate Continuous Trap: Imperial.Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	94	{[For -> 'Activate Continuous Trap: Imperial.Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(86, from)	{[While -> 'Activate Continuous Spell: Magic Formula from.' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	95	{[While -> 'Activate Continuous Spell: Magic Formula from.' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(87, 'End)	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block 'End.Phase.', |]}	96	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block 'End.Phase.', |]}
+goto(89, StatementList)	{[StatementList -> Statement StatementList., 'End]}	97	{[StatementList -> Statement StatementList., 'End]}
+goto(89, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	 
+goto(89, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(89, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(90, 'Copies')	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies'., Expression]}	98	{[AssignmentOp -> 'Attacks' | 'Defends' | 'Combines with' | 'Splits by' | 'Duels' | 'Copies'., Expression]}
+goto(91, |)	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' |.'Fusion Monster', 'with]}	99	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' |.'Fusion Monster', 'with]}
+goto(92, Else)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else.| ELSEIF, 'Card]}	100	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else.| ELSEIF, 'Card]}
+goto(92, 'Counter)	{[Else -> 'Counter.Trap: Negate Attack' 'Start Phase:' Block 'End Phase.', |]}	101	{[Else -> 'Counter.Trap: Negate Attack' 'Start Phase:' Block 'End Phase.', |]}
+goto(93, Identifier)	{[Logical -> Identifier and Identifier.', Engage in duel for ' LogicalOp, |]}	102	{[Logical -> Identifier and Identifier.', Engage in duel for ' LogicalOp, |]}
+goto(94, Order)	{[For -> 'Activate Continuous Trap: Imperial Order.based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	103	{[For -> 'Activate Continuous Trap: Imperial Order.based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(95, ')	{[While -> 'Activate Continuous Spell: Magic Formula from '.Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	104	{[While -> 'Activate Continuous Spell: Magic Formula from '.Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(96, Phase.')	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block 'End Phase.'., |]}	105	{[If -> 'Activate Trap: Mirror Force' 'Start Phase:' Block 'End Phase.'., |]}
+goto(99, 'Fusion)	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion.Monster', 'with]}	106	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion.Monster', 'with]}
+goto(100, |)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else |.ELSEIF, 'Card]}	107	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else |.ELSEIF, 'Card]; [ELSEIF -> .'Quick-Play: ' Logical 'Start Phase:' Block 'End Phase.', 'Card]}
+goto(101, Trap:)	{[Else -> 'Counter Trap:.Negate Attack' 'Start Phase:' Block 'End Phase.', |]}	108	{[Else -> 'Counter Trap:.Negate Attack' 'Start Phase:' Block 'End Phase.', |]}
+goto(102, ',)	{[Logical -> Identifier and Identifier ',.Engage in duel for ' LogicalOp, |]}	109	{[Logical -> Identifier and Identifier ',.Engage in duel for ' LogicalOp, |]}
+goto(103, based)	{[For -> 'Activate Continuous Trap: Imperial Order based.on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	110	{[For -> 'Activate Continuous Trap: Imperial Order based.on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(104, Identifier)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier.| Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	111	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier.| Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(106, Monster')	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster'., 'with]}	112	{[Type -> 'Normal Monster' | 'Effect Monster' | 'Tuner Monster' | 'Link Monster' | 'Fusion Monster'., 'with]}
+goto(107, ELSEIF)	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF., 'Card]}	113	{[Statement -> Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF., 'Card]}
+goto(107, 'Quick-Play:)	{[ELSEIF -> 'Quick-Play:.' Logical 'Start Phase:' Block 'End Phase.', 'Card]}	114	{[ELSEIF -> 'Quick-Play:.' Logical 'Start Phase:' Block 'End Phase.', 'Card]}
+goto(108, Negate)	{[Else -> 'Counter Trap: Negate.Attack' 'Start Phase:' Block 'End Phase.', |]}	115	{[Else -> 'Counter Trap: Negate.Attack' 'Start Phase:' Block 'End Phase.', |]}
+goto(109, Engage)	{[Logical -> Identifier and Identifier ', Engage.in duel for ' LogicalOp, |]}	116	{[Logical -> Identifier and Identifier ', Engage.in duel for ' LogicalOp, |]}
+goto(110, on)	{[For -> 'Activate Continuous Trap: Imperial Order based on.previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	117	{[For -> 'Activate Continuous Trap: Imperial Order based on.previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(111, |)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier |.Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	118	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier |.Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(114, ')	{[ELSEIF -> 'Quick-Play: '.Logical 'Start Phase:' Block 'End Phase.', 'Card]}	119	{[ELSEIF -> 'Quick-Play: '.Logical 'Start Phase:' Block 'End Phase.', 'Card]; [Logical -> .Identifier and Identifier ', Engage in duel for ' LogicalOp, 'Start]}
+goto(115, Attack')	{[Else -> 'Counter Trap: Negate Attack'.'Start Phase:' Block 'End Phase.', |]}	120	{[Else -> 'Counter Trap: Negate Attack'.'Start Phase:' Block 'End Phase.', |]}
+goto(116, in)	{[Logical -> Identifier and Identifier ', Engage in.duel for ' LogicalOp, |]}	121	{[Logical -> Identifier and Identifier ', Engage in.duel for ' LogicalOp, |]}
+goto(117, previous)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous.duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	122	{[For -> 'Activate Continuous Trap: Imperial Order based on previous.duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(118, Constant)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant.' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	123	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant.' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(119, Logical)	{[ELSEIF -> 'Quick-Play: ' Logical.'Start Phase:' Block 'End Phase.', 'Card]}	124	{[ELSEIF -> 'Quick-Play: ' Logical.'Start Phase:' Block 'End Phase.', 'Card]}
+goto(119, Identifier)	{[Logical -> Identifier.and Identifier ', Engage in duel for ' LogicalOp, 'Start]}	125	{[Logical -> Identifier.and Identifier ', Engage in duel for ' LogicalOp, 'Start]}
+goto(120, 'Start)	{[Else -> 'Counter Trap: Negate Attack' 'Start.Phase:' Block 'End Phase.', |]}	126	{[Else -> 'Counter Trap: Negate Attack' 'Start.Phase:' Block 'End Phase.', |]}
+goto(121, duel)	{[Logical -> Identifier and Identifier ', Engage in duel.for ' LogicalOp, |]}	127	{[Logical -> Identifier and Identifier ', Engage in duel.for ' LogicalOp, |]}
+goto(122, duel')	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel'.'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	128	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel'.'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(123, ')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant '.to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	129	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant '.to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(124, 'Start)	{[ELSEIF -> 'Quick-Play: ' Logical 'Start.Phase:' Block 'End Phase.', 'Card]}	130	{[ELSEIF -> 'Quick-Play: ' Logical 'Start.Phase:' Block 'End Phase.', 'Card]}
+goto(125, and)	{[Logical -> Identifier and.Identifier ', Engage in duel for ' LogicalOp, 'Start]}	131	{[Logical -> Identifier and.Identifier ', Engage in duel for ' LogicalOp, 'Start]}
+goto(126, Phase:')	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:'.Block 'End Phase.', |]}	132	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:'.Block 'End Phase.', |]; [Block -> .StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(127, for)	{[Logical -> Identifier and Identifier ', Engage in duel for.' LogicalOp, |]}	133	{[Logical -> Identifier and Identifier ', Engage in duel for.' LogicalOp, |]}
+goto(128, 'Tap)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap.Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	134	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap.Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(129, to)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to.' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	135	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to.' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(130, Phase:')	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:'.Block 'End Phase.', 'Card]}	136	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:'.Block 'End Phase.', 'Card]; [Block -> .StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(131, Identifier)	{[Logical -> Identifier and Identifier.', Engage in duel for ' LogicalOp, 'Start]}	137	{[Logical -> Identifier and Identifier.', Engage in duel for ' LogicalOp, 'Start]}
+goto(132, Block)	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block.'End Phase.', |]}	138	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block.'End Phase.', |]}
+goto(132, StatementList)	{[Block -> StatementList., 'End]}	88	 
+goto(132, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	 
+goto(132, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(132, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(133, ')	{[Logical -> Identifier and Identifier ', Engage in duel for '.LogicalOp, |]}	139	{[Logical -> Identifier and Identifier ', Engage in duel for '.LogicalOp, |]; [LogicalOp -> .'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(134, Continuous)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous.Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	140	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous.Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(135, ')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to '.Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	141	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to '.Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(136, Block)	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block.'End Phase.', 'Card]}	142	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block.'End Phase.', 'Card]}
+goto(136, StatementList)	{[Block -> StatementList., 'End]}	88	 
+goto(136, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	 
+goto(136, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(136, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(137, ',)	{[Logical -> Identifier and Identifier ',.Engage in duel for ' LogicalOp, 'Start]}	143	{[Logical -> Identifier and Identifier ',.Engage in duel for ' LogicalOp, 'Start]}
+goto(138, 'End)	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block 'End.Phase.', |]}	144	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block 'End.Phase.', |]}
+goto(139, LogicalOp)	{[Logical -> Identifier and Identifier ', Engage in duel for ' LogicalOp., |]}	145	{[Logical -> Identifier and Identifier ', Engage in duel for ' LogicalOp., |]}
+goto(139, 'Equality')	{[LogicalOp -> 'Equality'.| 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}	146	{[LogicalOp -> 'Equality'.| 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(140, Spell:)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell:.Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	147	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell:.Magic Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(141, Identifier)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier.| Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	148	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier.| Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(142, 'End)	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block 'End.Phase.', 'Card]}	149	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block 'End.Phase.', 'Card]}
+goto(143, Engage)	{[Logical -> Identifier and Identifier ', Engage.in duel for ' LogicalOp, 'Start]}	150	{[Logical -> Identifier and Identifier ', Engage.in duel for ' LogicalOp, 'Start]}
+goto(144, Phase.')	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block 'End Phase.'., |]}	151	{[Else -> 'Counter Trap: Negate Attack' 'Start Phase:' Block 'End Phase.'., |]}
+goto(146, |)	{[LogicalOp -> 'Equality' |.'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}	152	{[LogicalOp -> 'Equality' |.'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(147, Magic)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic.Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}	153	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic.Formula. ' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(148, |)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier |.Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	154	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier |.Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(149, Phase.')	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block 'End Phase.'., 'Card]}	155	{[ELSEIF -> 'Quick-Play: ' Logical 'Start Phase:' Block 'End Phase.'., 'Card]}
+goto(150, in)	{[Logical -> Identifier and Identifier ', Engage in.duel for ' LogicalOp, 'Start]}	156	{[Logical -> Identifier and Identifier ', Engage in.duel for ' LogicalOp, 'Start]}
+goto(152, 'Difference')	{[LogicalOp -> 'Equality' | 'Difference'.| 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}	157	{[LogicalOp -> 'Equality' | 'Difference'.| 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(153, Formula.)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula..' Block 'End Continuous Spell: Magic Formula.', |]}	158	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula..' Block 'End Continuous Spell: Magic Formula.', |]}
+goto(154, Constant)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant.' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	159	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant.' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(156, duel)	{[Logical -> Identifier and Identifier ', Engage in duel.for ' LogicalOp, 'Start]}	160	{[Logical -> Identifier and Identifier ', Engage in duel.for ' LogicalOp, 'Start]}
+goto(157, |)	{[LogicalOp -> 'Equality' | 'Difference' |.'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}	161	{[LogicalOp -> 'Equality' | 'Difference' |.'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(158, ')	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. '.Block 'End Continuous Spell: Magic Formula.', |]}	162	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. '.Block 'End Continuous Spell: Magic Formula.', |]; [Block -> .StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(159, ')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant '.with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	163	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant '.with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(160, for)	{[Logical -> Identifier and Identifier ', Engage in duel for.' LogicalOp, 'Start]}	164	{[Logical -> Identifier and Identifier ', Engage in duel for.' LogicalOp, 'Start]}
+goto(161, 'Dominance')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance'.| 'Subservience' | 'Supremacy' | 'Ascendancy', |]}	165	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance'.| 'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(162, Block)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block.'End Continuous Spell: Magic Formula.', |]}	166	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block.'End Continuous Spell: Magic Formula.', |]}
+goto(162, StatementList)	{[Block -> StatementList., 'End]}	88	 
+goto(162, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	 
+goto(162, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(162, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(163, with)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with.' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	167	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with.' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(164, ')	{[Logical -> Identifier and Identifier ', Engage in duel for '.LogicalOp, 'Start]}	168	{[Logical -> Identifier and Identifier ', Engage in duel for '.LogicalOp, 'Start]; [LogicalOp -> .'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(165, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' |.'Subservience' | 'Supremacy' | 'Ascendancy', |]}	169	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' |.'Subservience' | 'Supremacy' | 'Ascendancy', |]}
+goto(166, 'End)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End.Continuous Spell: Magic Formula.', |]}	170	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End.Continuous Spell: Magic Formula.', |]}
+goto(167, ')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with '.Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	171	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with '.Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(168, LogicalOp)	{[Logical -> Identifier and Identifier ', Engage in duel for ' LogicalOp., 'Start]}	172	{[Logical -> Identifier and Identifier ', Engage in duel for ' LogicalOp., 'Start]}
+goto(168, 'Equality')	{[LogicalOp -> 'Equality'.| 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	173	{[LogicalOp -> 'Equality'.| 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(169, 'Subservience')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience'.| 'Supremacy' | 'Ascendancy', |]}	174	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience'.| 'Supremacy' | 'Ascendancy', |]}
+goto(170, Continuous)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous.Spell: Magic Formula.', |]}	175	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous.Spell: Magic Formula.', |]}
+goto(171, Identifier)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier.| Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	176	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier.| Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(173, |)	{[LogicalOp -> 'Equality' |.'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	177	{[LogicalOp -> 'Equality' |.'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(174, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' |.'Supremacy' | 'Ascendancy', |]}	178	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' |.'Supremacy' | 'Ascendancy', |]}
+goto(175, Spell:)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell:.Magic Formula.', |]}	179	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell:.Magic Formula.', |]}
+goto(176, |)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier |.Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	180	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier |.Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(177, 'Difference')	{[LogicalOp -> 'Equality' | 'Difference'.| 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	181	{[LogicalOp -> 'Equality' | 'Difference'.| 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(178, 'Supremacy')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy'.| 'Ascendancy', |]}	182	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy'.| 'Ascendancy', |]}
+goto(179, Magic)	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic.Formula.', |]}	183	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic.Formula.', |]}
+goto(180, Constant)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant.' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	184	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant.' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(181, |)	{[LogicalOp -> 'Equality' | 'Difference' |.'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	185	{[LogicalOp -> 'Equality' | 'Difference' |.'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(182, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' |.'Ascendancy', |]}	186	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' |.'Ascendancy', |]}
+goto(183, Formula.')	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.'., |]}	187	{[For -> 'Activate Continuous Trap: Imperial Order based on previous duel' 'Tap Continuous Spell: Magic Formula. ' Block 'End Continuous Spell: Magic Formula.'., |]}
+goto(184, ')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant '.increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	188	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant '.increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(185, 'Dominance')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance'.| 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	189	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance'.| 'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(186, 'Ascendancy')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy'., |]}	190	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy'., |]}
+goto(188, increment')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment'.'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	191	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment'.'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(189, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' |.'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}	192	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' |.'Subservience' | 'Supremacy' | 'Ascendancy', 'Start]}
+goto(191, 'Check)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check.Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	193	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check.Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(192, 'Subservience')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience'.| 'Supremacy' | 'Ascendancy', 'Start]}	194	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience'.| 'Supremacy' | 'Ascendancy', 'Start]}
+goto(193, Continuous)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous.Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	195	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous.Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(194, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' |.'Supremacy' | 'Ascendancy', 'Start]}	196	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' |.'Supremacy' | 'Ascendancy', 'Start]}
+goto(195, Trap:)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap:.Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}	197	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap:.Imperial Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(196, 'Supremacy')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy'.| 'Ascendancy', 'Start]}	198	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy'.| 'Ascendancy', 'Start]}
+goto(197, Imperial)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial.Order.' Block 'End Continuous Trap: Imperial Order.', |]}	199	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial.Order.' Block 'End Continuous Trap: Imperial Order.', |]}
+goto(198, |)	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' |.'Ascendancy', 'Start]}	200	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' |.'Ascendancy', 'Start]}
+goto(199, Order.')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.'.Block 'End Continuous Trap: Imperial Order.', |]}	201	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.'.Block 'End Continuous Trap: Imperial Order.', |]; [Block -> .StatementList, 'End]; [StatementList -> .Statement StatementList, 'End]; [Statement -> .Declaration | Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]; [Declaration -> .'Card Summon' Identifier 'As' Type 'with power' Constant, |]}
+goto(200, 'Ascendancy')	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy'., 'Start]}	202	{[LogicalOp -> 'Equality' | 'Difference' | 'Dominance' | 'Subservience' | 'Supremacy' | 'Ascendancy'., 'Start]}
+goto(201, Block)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block.'End Continuous Trap: Imperial Order.', |]}	203	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block.'End Continuous Trap: Imperial Order.', |]}
+goto(201, StatementList)	{[Block -> StatementList., 'End]}	88	 
+goto(201, Statement)	{[StatementList -> Statement.StatementList, 'End]}	89	 
+goto(201, Declaration)	{[Statement -> Declaration.| Assignment | Print | Read | If | While | For | Logical | Else | ELSEIF, 'Card]}	6	 
+goto(201, 'Card)	{[Declaration -> 'Card.Summon' Identifier 'As' Type 'with power' Constant, |]}	7	 
+goto(203, 'End)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End.Continuous Trap: Imperial Order.', |]}	204	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End.Continuous Trap: Imperial Order.', |]}
+goto(204, Continuous)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous.Trap: Imperial Order.', |]}	205	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous.Trap: Imperial Order.', |]}
+goto(205, Trap:)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap:.Imperial Order.', |]}	206	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap:.Imperial Order.', |]}
+goto(206, Imperial)	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial.Order.', |]}	207	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial.Order.', |]}
+goto(207, Order.')	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.'., |]}	208	{[While -> 'Activate Continuous Spell: Magic Formula from ' Identifier | Constant ' to ' Identifier | Constant ' with ' Identifier | Constant ' increment' 'Check Continuous Trap: Imperial Order.' Block 'End Continuous Trap: Imperial Order.'., |]}
